@@ -1,0 +1,1 @@
+backend: java -jar target/resultGen-0.0.1-SNAPSHOT.jar
