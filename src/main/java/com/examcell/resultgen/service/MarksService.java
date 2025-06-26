@@ -3,7 +3,13 @@ package com.examcell.resultgen.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.examcell.resultgen.dto.MarkDTO;
 import com.examcell.resultgen.dto.MarkEntryDto;
+import com.examcell.resultgen.dto.TeacherMarkDTO;
 import com.examcell.resultgen.model.MarksRecord;
 
 public interface MarksService {
@@ -24,8 +30,24 @@ public interface MarksService {
      *
      * @param professorEmployeeId The Employee ID of the professor updating the mark (for tracking).
      * @param recordId The ID of the MarksRecord to update.
-     * @param marksObtained The new marks value.
+     * @param marks The new total marks value.
      * @return The updated MarksRecord entity.
      */
-    MarksRecord updateMark(String professorEmployeeId, UUID recordId, Double marksObtained);
+    MarksRecord updateMark(String professorEmployeeId, UUID recordId, Double marks);
+
+    // New methods for ProfessorPortalController
+    List<MarkDTO> getMarksByTeacherAndSubject(UUID teacherId, UUID subjectId);
+    List<TeacherMarkDTO> getTeacherMarksByTeacherAndSubject(UUID teacherId, UUID subjectId);
+    MarkDTO createMark(UUID teacherId, MarkEntryDto markEntryDto);
+    MarkDTO updateMarkByTeacher(UUID teacherId, UUID markId, Double internal1, Double internal2, Double external);
+    void deleteMarkByTeacher(UUID teacherId, UUID markId);
+    List<MarkDTO> uploadMarksFromExcel(UUID teacherId, MultipartFile file, UUID subjectId, String semester);
+
+    // Admin/Centralized marks methods
+    Page<MarkDTO> getAllMarksByCriteria(UUID studentId, UUID subjectId, Pageable pageable);
+    MarkDTO getMarkById(UUID markId);
+    Page<MarkDTO> getMarksByStudentId(UUID studentId, Pageable pageable);
+    MarkDTO updateMarkByAdmin(String adminEmployeeId, UUID markId, Double internal1, Double internal2, Double external);
+    void deleteMarkByAdmin(UUID markId);
+    List<MarkDTO> uploadMarksFromExcel(String adminEmployeeId, MultipartFile file, UUID subjectId, String semester);
 } 

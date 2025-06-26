@@ -42,7 +42,13 @@ public class MarksRecord {
     private Subject subject;
 
     @Column(nullable = false)
-    private Double marksObtained;
+    private Double internal1;
+
+    @Column(nullable = false)
+    private Double internal2;
+
+    @Column(nullable = false)
+    private Double external;
 
     @Column(nullable = false)
     private Double maxMarks = 100.0; // Default max marks, can be overridden
@@ -57,18 +63,12 @@ public class MarksRecord {
     @UpdateTimestamp
     private Instant updatedAt;
 
-    public MarksRecord(Student student, Subject subject, Double marksObtained, Professor enteredBy) {
+    public MarksRecord(Student student, Subject subject, Double internal1, Double internal2, Double external, Professor enteredBy) {
         this.student = student;
         this.subject = subject;
-        this.marksObtained = marksObtained;
-        this.enteredBy = enteredBy;
-    }
-
-    public MarksRecord(Student student, Subject subject, Double marksObtained, Double maxMarks, Professor enteredBy) {
-        this.student = student;
-        this.subject = subject;
-        this.marksObtained = marksObtained;
-        this.maxMarks = maxMarks;
+        this.internal1 = internal1;
+        this.internal2 = internal2;
+        this.external = external;
         this.enteredBy = enteredBy;
     }
 } 

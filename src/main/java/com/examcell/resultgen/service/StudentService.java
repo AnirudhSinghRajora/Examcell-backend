@@ -1,9 +1,15 @@
 package com.examcell.resultgen.service;
 
 import java.util.List;
+import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.examcell.resultgen.dto.ResultDto;
 import com.examcell.resultgen.dto.SemesterResultSummaryDto;
+import com.examcell.resultgen.dto.StudentDashboardDTO;
+import com.examcell.resultgen.dto.StudentDto;
 import com.examcell.resultgen.dto.SubjectDto;
 import com.examcell.resultgen.dto.YearResultSummaryDto;
 
@@ -35,4 +41,19 @@ public interface StudentService {
     SemesterResultSummaryDto getResultsBySemester(String rollNumber, int semester);
 
     YearResultSummaryDto getResultsByYear(String rollNumber, int yearNumber);
+
+    Page<StudentDto> getAllStudents(String search, Integer semester, String course, String branch, Pageable pageable);
+    StudentDto getStudentById(UUID id);
+    StudentDto getStudentByRollNumber(String rollNo);
+    StudentDto createStudent(StudentDto studentDTO);
+    StudentDto updateStudent(UUID id, StudentDto studentDTO);
+    void deleteStudent(UUID id);
+
+    /**
+     * Get the dashboard summary for a specific student.
+     *
+     * @param studentId The UUID of the student.
+     * @return A StudentDashboardDTO containing aggregated information.
+     */
+    StudentDashboardDTO getStudentDashboard(UUID studentId);
 } 

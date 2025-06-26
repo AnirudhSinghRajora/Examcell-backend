@@ -13,4 +13,5 @@ public class ResultDto {
     private double maxMarks;
     private Integer semester; // The semester in which these marks were obtained (can differ from subject's default semester)
     private double gradePoint;
+    private String grade; // Added grade field
 } 

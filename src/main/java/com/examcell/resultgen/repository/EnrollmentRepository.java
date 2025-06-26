@@ -23,4 +23,10 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {
 
     // Check if a student is enrolled in a specific subject
     boolean existsByStudentIdAndSubjectId(UUID studentId, UUID subjectId);
+
+    // Count distinct students enrolled in subjects taught by a professor
+    @Query(value = "SELECT COUNT(DISTINCT e.student_id) FROM enrollments e " +
+           "JOIN professor_subject_assignments psa ON e.subject_id = psa.subject_id " +
+           "WHERE psa.professor_id = :professorId", nativeQuery = true)
+    long countDistinctStudentsByProfessorId(@Param("professorId") UUID professorId);
 } 

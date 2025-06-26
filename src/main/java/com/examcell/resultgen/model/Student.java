@@ -1,11 +1,17 @@
 package com.examcell.resultgen.model;
 
-import jakarta.persistence.*;
+import java.util.Set;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Entity
 @Table(name = "students")
@@ -36,6 +42,14 @@ public class Student extends User {
 
     public Student(String username, String rollNumber, Course course, Branch branch, Integer batchYear) {
         super(username, Role.STUDENT);
+        this.rollNumber = rollNumber;
+        this.course = course;
+        this.branch = branch;
+        this.batchYear = batchYear;
+    }
+
+    public Student(String username, String password, String firstName, String lastName, Role role, String rollNumber, Course course, Branch branch, Integer batchYear) {
+        super(username, password, firstName, lastName, role);
         this.rollNumber = rollNumber;
         this.course = course;
         this.branch = branch;

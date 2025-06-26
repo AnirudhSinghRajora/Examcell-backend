@@ -1,77 +1,81 @@
 package com.examcell.resultgen.controller;
 
-import java.util.List;
+import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.examcell.resultgen.dto.ResultDto;
-import com.examcell.resultgen.dto.SemesterResultSummaryDto;
-import com.examcell.resultgen.dto.SubjectDto;
-import com.examcell.resultgen.dto.YearResultSummaryDto;
+import com.examcell.resultgen.dto.StudentDto;
 import com.examcell.resultgen.service.StudentService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/students")
+@RequestMapping("/api/students") // Admin-facing endpoints for student management
 @RequiredArgsConstructor
+@CrossOrigin
 public class StudentController {
 
     private final StudentService studentService;
 
-    // Security Context helpers and /me endpoints removed.
-    // Student identified explicitly via rollNumber in the path.
+    @GetMapping
+    public ResponseEntity<Page<StudentDto>> getAllStudents(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer semester,
+            @RequestParam(required = false, name = "course") String courseParam,
+            @RequestParam(required = false, name = "branch") String branchParam,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id,asc") String[] sort) {
 
-    /**
-     * GET /api/students/{rollNumber}/subjects
-     * Retrieves subjects for a specific student's current semester.
-     */
-    @GetMapping("/{rollNumber}/subjects")
-    public ResponseEntity<List<SubjectDto>> getStudentSubjects(
-           @PathVariable String rollNumber) {
-        // No authorization check needed here per requirements
-        List<SubjectDto> subjects = studentService.getCurrentSubjects(rollNumber);
-        return ResponseEntity.ok(subjects);
+        Sort sortOrder = Sort.by(Sort.Direction.fromString(sort[1]), sort[0]);
+        Pageable pageable = PageRequest.of(page, size, sortOrder);
+        Page<StudentDto> students = studentService.getAllStudents(search, semester, courseParam, branchParam, pageable);
+        return ResponseEntity.ok(students);
     }
 
-    /**
-     * GET /api/students/{rollNumber}/results
-     * Retrieves all results for a specific student.
-     */
-    @GetMapping("/{rollNumber}/results")
-    public ResponseEntity<List<ResultDto>> getAllResults(
-            @PathVariable String rollNumber) {
-        // No authorization check needed here per requirements
-        List<ResultDto> results = studentService.getAllResults(rollNumber);
-        return ResponseEntity.ok(results);
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentDto> getStudentById(@PathVariable UUID id) {
+        StudentDto student = studentService.getStudentById(id);
+        return ResponseEntity.ok(student);
     }
 
-    /**
-     * GET /api/students/{rollNumber}/results/{semester}
-     * Retrieves results for a specific student and semester.
-     */
-    @GetMapping("/{rollNumber}/results/{semester}")
-    public ResponseEntity<SemesterResultSummaryDto> getResultsBySemester(
-            @PathVariable String rollNumber,
-            @PathVariable int semester) {
-        // No authorization check needed here per requirements
-        SemesterResultSummaryDto resultSummary = studentService.getResultsBySemester(rollNumber, semester);
-        return ResponseEntity.ok(resultSummary);
+    @GetMapping("/roll/{rollNo}")
+    public ResponseEntity<StudentDto> getStudentByRollNumber(@PathVariable String rollNo) {
+        StudentDto student = studentService.getStudentByRollNumber(rollNo);
+        return ResponseEntity.ok(student);
     }
 
-    /**
-     * GET /api/students/{rollNumber}/year-results/{yearNumber}
-     * Retrieves results for a specific student and year (two semesters).
-     */
-    @GetMapping("/{rollNumber}/year-results/{yearNumber}")
-    public ResponseEntity<YearResultSummaryDto> getResultsByYear(
-            @PathVariable String rollNumber,
-            @PathVariable int yearNumber) {
-        YearResultSummaryDto yearResult = studentService.getResultsByYear(rollNumber, yearNumber);
-        return ResponseEntity.ok(yearResult);
+    @PostMapping
+    public ResponseEntity<StudentDto> createStudent(@Valid @RequestBody StudentDto studentDTO) {
+        StudentDto createdStudent = studentService.createStudent(studentDTO);
+        return new ResponseEntity<>(createdStudent, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StudentDto> updateStudent(@PathVariable UUID id, @Valid @RequestBody StudentDto studentDTO) {
+        StudentDto updatedStudent = studentService.updateStudent(id, studentDTO);
+        return ResponseEntity.ok(updatedStudent);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable UUID id) {
+        studentService.deleteStudent(id);
+        return ResponseEntity.noContent().build();
     }
 } 

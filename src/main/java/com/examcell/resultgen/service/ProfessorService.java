@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import com.examcell.resultgen.dto.StudentDto;
 import com.examcell.resultgen.dto.SubjectDto;
+import com.examcell.resultgen.dto.TeacherDTO;
+import com.examcell.resultgen.dto.TeacherDashboardDTO;
 
 public interface ProfessorService {
 
@@ -24,4 +26,20 @@ public interface ProfessorService {
      * @return A list of StudentDto enrolled in the subject.
      */
     List<StudentDto> getStudentsBySubject(UUID subjectId);
+
+    /**
+     * Get a professor by their ID.
+     *
+     * @param id The UUID of the professor.
+     * @return A TeacherDTO representing the professor.
+     */
+    TeacherDTO getProfessorById(UUID id);
+
+    /**
+     * Get the dashboard summary for a specific professor.
+     *
+     * @param teacherId The UUID of the professor.
+     * @return A TeacherDashboardDTO containing aggregated information.
+     */
+    TeacherDashboardDTO getTeacherDashboard(UUID teacherId);
 } 

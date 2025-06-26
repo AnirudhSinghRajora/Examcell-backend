@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,5 +34,14 @@ public interface SubjectRepository extends JpaRepository<Subject, UUID> {
 
     // Find subjects by ID list
     List<Subject> findByIdIn(List<UUID> ids);
+
+    // Find subjects by semester (string)
+    List<Subject> findBySemester(Integer semester);
+
+    @Query("SELECT s FROM Subject s JOIN s.branches b WHERE " +
+           "(:search IS NULL OR LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(s.code) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
+           "(:semester IS NULL OR s.semester = :semester) AND " +
+           "(:branch IS NULL OR b = :branch)")
+    Page<Subject> findAllByCriteria(@Param("search") String search, @Param("semester") Integer semester, @Param("branch") Branch branch, Pageable pageable);
 
 } 

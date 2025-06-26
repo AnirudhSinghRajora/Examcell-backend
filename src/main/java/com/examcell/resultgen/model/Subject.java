@@ -39,6 +39,9 @@ public class Subject {
     @Column(nullable = false)
     private String name; // e.g., Data Structures
 
+    @Column(columnDefinition = "TEXT") // Optional description field
+    private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Course course; // The course this subject belongs to
@@ -54,7 +57,7 @@ public class Subject {
     private Integer semester; // Semester in which this subject is typically taught
 
     @Column(nullable = false)
-    private double credits; // Number of credits for this subject
+    private int credits; // Number of credits for this subject
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Enrollment> enrollments;
@@ -70,10 +73,10 @@ public class Subject {
         this.course = course;
         this.branches = branches;
         this.semester = semester;
-        this.credits = 0.0; // Default or handle based on actual credits
+        this.credits = 0; // Default or handle based on actual credits
     }
 
-    public Subject(String code, String name, Course course, Set<Branch> branches, Integer semester, double credits) {
+    public Subject(String code, String name, Course course, Set<Branch> branches, Integer semester, int credits) {
         this.code = code;
         this.name = name;
         this.course = course;
